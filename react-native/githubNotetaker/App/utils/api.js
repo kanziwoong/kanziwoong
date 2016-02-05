@@ -1,0 +1,35 @@
+'use strict';
+
+var co = require('co');
+//var HandledError = require('./errors').HandledError;
+
+var api = {
+  getBio(username){
+    return co(function *() {
+      username = username.toLowerCase().trim();
+      var url = `https://api.github.com/users/${username}`;
+      return fetch(url).then((res) => res.json());
+    });
+
+  },
+  getRepos(username) {
+    username = username.toLowerCase().trim();
+    var url = `https://api.github.com/users/${username}/repos`;
+    return fetch(url).then((res) => res.json());
+  },
+  getNotes(username) {
+    username = username.toLowerCase().trim();
+    var url = `https://githubnotetaker-kanziw.firebaseio.com/${username}.json`;
+    return fetch(url).then((res) => res.json())
+  },
+  addNote(username, note){
+    username = username.toLowerCase().trim();
+    var url = `https://githubnotetaker-kanziw.firebaseio.com/${username}.json`;
+    return fetch(url, {
+      method: 'post',
+      body: JSON.stringify(note),
+    }).then((res) => res.json());
+  },
+};
+
+module.exports = api;

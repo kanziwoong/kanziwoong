@@ -1,0 +1,4 @@
+user@ubuntu:~$ man 2 sysinfo
+user@ubuntu:~$ gcc -o sysinfo sysinfo.c
+user@ubuntu:~$ ./sysinfo
+

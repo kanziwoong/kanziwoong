@@ -1,0 +1,21 @@
+ubuntu $ cat static.c
+#include <stdio.h>
+
+void static_function(int num) {
+  printf("this is static library function : %d\n", num);
+}
+ubuntu $ gcc -c static.c
+ubuntu $ ar rv libstatic.a static.o
+ar: creating libstatic.a
+a - static.o
+
+ubuntu $ cat shared.c
+#include <stdio.h>
+
+void shared_function(int num1, int num2) {
+  printf("this is shared library function : %d, %d\n", num1, num2);
+}
+ubuntu $ gcc -c -fPIC shared.c
+ubuntu $ ld -shared -o libshared.so shared.o
+
+..... - -^

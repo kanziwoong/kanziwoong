@@ -1,0 +1,50 @@
+-- --------------------------------------------------------
+-- 호스트:                          127.0.0.1
+-- 서버 버전:                        5.6.23-log - MySQL Community Server (GPL)
+-- 서버 OS:                        Win32
+-- HeidiSQL 버전:                  9.1.0.4867
+-- --------------------------------------------------------
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET NAMES utf8mb4 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+
+-- expressjs_bbs 의 데이터베이스 구조 덤핑
+CREATE DATABASE IF NOT EXISTS `expressjs_bbs` /*!40100 DEFAULT CHARACTER SET utf8 */;
+USE `expressjs_bbs`;
+
+
+-- 테이블 expressjs_bbs의 구조를 덤프합니다. myblogboard
+CREATE TABLE IF NOT EXISTS `myblogboard` (
+  `iBoardNum` int(11) NOT NULL AUTO_INCREMENT,
+  `szMemberID` varchar(50) NOT NULL,
+  `szBoardTitle` varchar(50) NOT NULL,
+  `szBoardContent` text NOT NULL,
+  `tBoardRegdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `tBoardModdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`iBoardNum`),
+  KEY `myblogboard_ibfk_1` (`szMemberID`),
+  CONSTRAINT `myblogboard_ibfk_1` FOREIGN KEY (`szMemberID`) REFERENCES `myblogmember` (`szMemberID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- 내보낼 데이터가 선택되어 있지 않습니다.
+
+
+-- 테이블 expressjs_bbs의 구조를 덤프합니다. myblogmember
+CREATE TABLE IF NOT EXISTS `myblogmember` (
+  `szMemberID` varchar(50) NOT NULL,
+  `szMemberPassword` varchar(128) NOT NULL,
+  `szMemberName` varchar(20) NOT NULL,
+  `tMemberBirth` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `cMemberGender` char(6) NOT NULL,
+  `tMemberRegdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `bMemberIsAdmin` tinyint(4) NOT NULL DEFAULT '0',
+  `bMemberWithdraw` tinyint(4) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`szMemberID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='블로그 회원 테이블';
+
+-- 내보낼 데이터가 선택되어 있지 않습니다.
+/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
+/*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

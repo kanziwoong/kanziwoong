@@ -1,0 +1,14 @@
+*.log
+build/
+node_modules/
+.DS_Store
+
+# for express
+.idea/
+
+# for Docker
+.vbox/
+.vagrant/
+
+# for Private
+studyServer/

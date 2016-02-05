@@ -1,0 +1,8 @@
+mac $ cd ~/dev/kanziwoong/
+mac $ mkdir react
+mac $ cd react/
+mac $ npm init
+mac $ npm install react-dom --save
+mac $ npm install babel-loader babel-core babel-preset-es2015 babel-preset-react
+mac $ touch index.html App.js main.js webpack.config.js
+mac $ npm install babel webpack webpack-dev-server -g  // 위의 명령어를 대체할 수 있다?
