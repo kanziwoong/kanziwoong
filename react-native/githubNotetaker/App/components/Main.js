@@ -1,19 +1,14 @@
 'use strict';
 
-var React = require('react-native');
-var api = require('../utils/api');
-var Dashboard = require('./Dashboard');
+let React = require('react-native');
+let co = require('co');
 
-var {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  TouchableHighlight,
-  ActivityIndicatorIOS
-  } = React;
+let api = require('../utils/api');
+let Dashboard = require('./Dashboard');
 
-var styles = StyleSheet.create({
+let {View, Text, StyleSheet, TextInput, TouchableHighlight, ActivityIndicatorIOS} = React;
+
+let styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     padding: 30,
@@ -63,7 +58,7 @@ class Main extends React.Component {
     this.state = {
       username: '',
       isLoading: false,
-      error: false
+      error: '',
     }
   }
 
@@ -73,40 +68,43 @@ class Main extends React.Component {
     })
   }
 
-  handleSubmit() {
-    // update our indicatorIOS spinner
+  /**
+   * 초기화 헬퍼 함수
+   * @param [err] {string}
+   */
+  setInit(err) {
     this.setState({
-      isLoading: true
+      isLoading: false,
+      error: err ? err : '',
+      username: err ? this.state.username : '',
     });
+  }
 
-    // fetch data from github
-    api.getBio(this.state.username)
-      .then((res) => {
-        if (res.message === 'Not Found') {
-          this.setState({
-            error: 'User not found',
-            isLoading: false,
-          });
-        } else {
-          this.props.navigator.push({
-            title: res.name || res.login,
-            component: Dashboard,
-            passProps: {userInfo: res},
-          });
-          this.setState({
-            isLoading: false,
-            error: false,
-            username: '',
-          });
-        }
+  handleSubmit() {
+    return co(function *() {
+      // update our indicatorIOS spinner
+      this.setState({
+        isLoading: true
       });
-    //rerout to the next passing that github information
+
+      // fetch data from github
+      let res = yield api.getBio(this.state.username);
+      let err;
+      if (res.message === 'Not Found') {
+        err = 'User not found';
+      } else {
+        //reroute to the next passing that github information
+        this.props.navigator.push({
+          title: res.name || res.login,
+          component: Dashboard,
+          passProps: {userInfo: res},
+        });
+      }
+      this.setInit(err);
+    }.bind(this));
   }
 
   render() {
-    var showErr = (
-      this.state.error ? <Text> {this.state.error} </Text> : <View></View>
-    );
     return (
       <View style={styles.mainContainer}>
         <Text style={styles.title}> Search for a Github User </Text>
@@ -120,11 +118,8 @@ class Main extends React.Component {
           underlayColor="white">
           <Text style={styles.buttonText}> SEARCH </Text>
         </TouchableHighlight>
-        <ActivityIndicatorIOS
-          animating={this.state.isLoading}
-          color='#111'
-          size='large'></ActivityIndicatorIOS>
-        {showErr}
+        <ActivityIndicatorIOS animating={this.state.isLoading} color='#111' size='large'/>
+        <Text> {this.state.error} </Text>
       </View>
     )
   }

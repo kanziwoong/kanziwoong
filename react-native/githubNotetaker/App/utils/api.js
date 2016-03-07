@@ -1,34 +1,37 @@
 'use strict';
 
-var co = require('co');
-//var HandledError = require('./errors').HandledError;
+let co = require('co');
+let Config = require('./config');
+let BaseUrl = Config.Const.BaseUrl;
 
-var api = {
+function toValidString(str) {
+  return str.toLowerCase().trim();
+}
+
+function get(url) {
+  return co(function *() {
+    return fetch(url, {method: 'GET'}).then(res => res.json());
+  });
+}
+
+function post(url, obj) {
+  return co(function *() {
+    return fetch(url, {method: 'POST', body: JSON.stringify(obj)}).then(res => res.json());
+  });
+}
+
+let api = {
   getBio(username){
-    return co(function *() {
-      username = username.toLowerCase().trim();
-      var url = `https://api.github.com/users/${username}`;
-      return fetch(url).then((res) => res.json());
-    });
-
+    return get(`${BaseUrl.Github}/${toValidString(username)}`);
   },
   getRepos(username) {
-    username = username.toLowerCase().trim();
-    var url = `https://api.github.com/users/${username}/repos`;
-    return fetch(url).then((res) => res.json());
+    return get(`${BaseUrl.Github}/${toValidString(username)}/repos`);
   },
   getNotes(username) {
-    username = username.toLowerCase().trim();
-    var url = `https://githubnotetaker-kanziw.firebaseio.com/${username}.json`;
-    return fetch(url).then((res) => res.json())
+    return get(`${BaseUrl.Firebaseio}/${toValidString(username)}.json`);
   },
   addNote(username, note){
-    username = username.toLowerCase().trim();
-    var url = `https://githubnotetaker-kanziw.firebaseio.com/${username}.json`;
-    return fetch(url, {
-      method: 'post',
-      body: JSON.stringify(note),
-    }).then((res) => res.json());
+    return post(`${BaseUrl.Firebaseio}/${toValidString(username)}.json`, note);
   },
 };
 

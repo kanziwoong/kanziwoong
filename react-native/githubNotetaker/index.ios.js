@@ -1,17 +1,11 @@
 'use strict';
 
-var React = require('react-native');
-var Main = require('./App/components/Main');
+let React = require('react-native');
+let Main = require('./App/components/Main');
 
-var {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View,
-  NavigatorIOS,
-  } = React;
+let {AppRegistry, NavigatorIOS, StyleSheet} = React;
 
-var styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#111111',
