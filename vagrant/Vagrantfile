@@ -47,11 +47,9 @@ Vagrant.configure(2) do |config|
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
 # Shared Folder
-  config.vm.synced_folder "../", "/home/vagrant/data", type: "rsync",
+   config.vm.synced_folder "./", "/home/vagrant/data", type: "rsync",
     rsync__exclude: [".git/", ".sass-cache/", "node_modules/", ".tmp/", "dist/", "backup/"],
     rsync__auto: true
-  config.vm.synced_folder "./tools", "/home/vagrant/tools", type: "rsync",
-      rsync__auto: true
 #   config.vm.synced_folder "../expressjs", "/home/vagrant/expressjs"
 
   # Provider-specific configuration so you can fine-tune various

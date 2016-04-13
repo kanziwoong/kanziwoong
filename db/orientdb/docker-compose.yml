@@ -1,0 +1,8 @@
+orient:
+  image: orient:2.1
+  ports:
+    - "2424:2424"
+    - "2480:2480"
+  log_driver: "syslog"
+  environment:
+    ORIENTDB_ROOT_PASSWORD: 'a'
