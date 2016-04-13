@@ -49,69 +49,121 @@
 	 * Created by kanziw on 2016. 4. 13..
 	 */
 
-	var _react = __webpack_require__(1);
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _react2 = _interopRequireDefault(_react);
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	var _reactDom = __webpack_require__(158);
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-	var _reactDom2 = _interopRequireDefault(_reactDom);
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var _redux = __webpack_require__(159);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var counter = function counter() {
-	  var state = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
-	  var action = arguments[1];
-
+	var todo = function todo(state, action) {
 	  switch (action.type) {
-	    case 'INCREMENT':
-	      return state + 1;
-	    case 'DECREMENT':
-	      return state - 1;
+	    case 'ADD_TODO':
+	      return { id: action.id, text: action.text, completed: false };
+	    case 'TOGGLE_TODO':
+	      if (state.id !== action.id) {
+	        return state;
+	      }
+	      return Object.assign({}, state, { completed: !state.completed });
+	    // return {...state, completed: !state.completed}; // ES7, can not use node version 5.10.1
 	    default:
 	      return state;
 	  }
 	};
 
-	var Counter = function Counter(_ref) {
-	  var value = _ref.value;
-	  var onIncrement = _ref.onIncrement;
-	  var onDecrement = _ref.onDecrement;
-	  return _react2.default.createElement(
-	    'div',
-	    null,
-	    _react2.default.createElement(
-	      'h1',
-	      null,
-	      value
-	    ),
-	    _react2.default.createElement(
-	      'button',
-	      { onClick: onIncrement },
-	      '+'
-	    ),
-	    _react2.default.createElement(
-	      'button',
-	      { onClick: onDecrement },
-	      '-'
-	    )
-	  );
+	// const todos = (state = [], action) => {  // possible when use ./node_modules/.bin/babel-node instead of node
+	var todos = function todos(state, action) {
+	  if (state === undefined) {
+	    state = [];
+	  }
+	  switch (action.type) {
+	    case 'ADD_TODO':
+	      return state.concat([todo(undefined, action)]);
+	    // return [...state, todo(undefined, action)]; // node version 5.x
+	    case 'TOGGLE_TODO':
+	      return state.map(function (t) {
+	        return todo(t, action);
+	      });
+	    default:
+	      return state;
+	  }
 	};
 
-	var store = (0, _redux.createStore)(counter);
+	// const visibilityFilter = (state = 'SHOW_ALL', action) => { // possible when use ./node_modules/.bin/babel-node instead of node
+	var visibilityFilter = function visibilityFilter(state, action) {
+	  if (state === undefined) {
+	    state = 'SHOW_ALL';
+	  }
+	  switch (action.type) {
+	    case 'SET_VISIBILITY_FILTER':
+	      return action.filter;
+	    default:
+	      return state;
+	  }
+	};
+
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(158);
+	var Redux = __webpack_require__(159);
+	var combineReducers = Redux.combineReducers;
+	var todoApp = combineReducers({ todos: todos, visibilityFilter: visibilityFilter });
+
+	var createStore = Redux.createStore;
+	var store = createStore(todoApp);
+
+	var nextTodoId = 0;
+
+	var TodoApp = function (_React$Component) {
+	  _inherits(TodoApp, _React$Component);
+
+	  function TodoApp() {
+	    _classCallCheck(this, TodoApp);
+
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(TodoApp).apply(this, arguments));
+	  }
+
+	  _createClass(TodoApp, [{
+	    key: 'render',
+	    value: function render() {
+	      var _this2 = this;
+
+	      return React.createElement(
+	        'div',
+	        null,
+	        React.createElement('input', { ref: function ref(node) {
+	            return _this2.input = node;
+	          } }),
+	        React.createElement(
+	          'button',
+	          { onClick: function onClick() {
+	              store.dispatch({ type: 'ADD_TODO', text: _this2.input.value, id: nextTodoId++ });
+	              _this2.input.value = '';
+	            } },
+	          'Add Todo'
+	        ),
+	        React.createElement(
+	          'ul',
+	          null,
+	          this.props.todos.map(function (todo) {
+	            return React.createElement(
+	              'li',
+	              { key: todo.id },
+	              ' ',
+	              todo.text,
+	              ' '
+	            );
+	          })
+	        )
+	      );
+	    }
+	  }]);
+
+	  return TodoApp;
+	}(React.Component);
 
 	var render = function render() {
-	  _reactDom2.default.render(_react2.default.createElement(Counter, {
-	    value: store.getState(),
-	    onIncrement: function onIncrement() {
-	      return store.dispatch({ type: 'INCREMENT' });
-	    },
-	    onDecrement: function onDecrement() {
-	      return store.dispatch({ type: 'DECREMENT' });
-	    }
-	  }), document.getElementById('app'));
+	  ReactDOM.render(React.createElement(TodoApp, { todos: store.getState().todos }), document.getElementById('app'));
 	};
 
 	store.subscribe(render);
